@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}Admin dashboard{% endblock %}
+{% block content %}
+<div class="container py-4">
+
+  <h3 class="fw-bold mb-1"><i class="bi bi-speedometer2 text-primary"></i> Admin dashboard</h3>
+  <p class="text-muted mb-4">Ringkasan seluruh aktivitas pengguna TargetKu.</p>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+      <div class="stat-card">
+        <div class="stat-icon mb-2" style="background:#EEF0FF;color:#6C5CE7;"><i class="bi bi-people-fill"></i></div>
+        <div class="text-muted small">Total pengguna</div>
+        <div class="fs-4 fw-bold">{{ total_user }}</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="stat-card">
+        <div class="stat-icon mb-2" style="background:#FFF6E0;color:#e0a713;"><i class="bi bi-flag-fill"></i></div>
+        <div class="text-muted small">Total target dibuat</div>
+        <div class="fs-4 fw-bold">{{ total_target }}</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="stat-card">
+        <div class="stat-icon mb-2" style="background:#E4FBF3;color:#00B894;"><i class="bi bi-trophy-fill"></i></div>
+        <div class="text-muted small">Target tercapai</div>
+        <div class="fs-4 fw-bold">{{ total_tercapai }}</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="stat-card">
+        <div class="stat-icon mb-2" style="background:#FDEBEA;color:#E17055;"><i class="bi bi-cash-coin"></i></div>
+        <div class="text-muted small">Total dana tercatat</div>
+        <div class="fs-6 fw-bold">Rp {{ '{:,.0f}'.format(total_setoran).replace(',', '.') }}</div>
+      </div>
+    </div>
+  </div>
+
+  {% if chart_labels %}
+  <div class="card p-4 mb-4">
+    <h6 class="fw-semibold mb-3"><i class="bi bi-bar-chart-fill text-primary"></i> Total setoran per bulan (6 bulan terakhir)</h6>
+    <canvas id="adminChart" height="80"></canvas>
+  </div>
+  {% endif %}
+
+  <div class="card p-4">
+    <h6 class="fw-semibold mb-3"><i class="bi bi-people text-primary"></i> Daftar pengguna ({{ total_user }})</h6>
+    {% if not user_stats %}
+      <div class="empty-state">
+        <i class="bi bi-person-x display-5 mb-2"></i>
+        <p class="mb-0">Belum ada pengguna terdaftar.</p>
+      </div>
+    {% else %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr class="small text-muted">
+            <th>Username</th>
+            <th>Email</th>
+            <th>Bergabung</th>
+            <th>Jumlah target</th>
+            <th>Tercapai</th>
+            <th>Total tabungan</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in user_stats %}
+          <tr>
+            <td class="fw-semibold">{{ row.user.username }}</td>
+            <td class="small text-muted">{{ row.user.email }}</td>
+            <td class="small">{{ row.user.created_at.strftime('%d %b %Y') }}</td>
+            <td>{{ row.jumlah_target }}</td>
+            <td>{{ row.jumlah_tercapai }}</td>
+            <td>Rp {{ '{:,.0f}'.format(row.total_tabungan).replace(',', '.') }}</td>
+            <td class="text-end">
+              <form action="{{ url_for('admin_user_hapus', user_id=row.user.id) }}" method="POST"
+                    onsubmit="return confirm('Hapus akun ini beserta seluruh data tabungannya?');">
+                <button type="submit" class="btn btn-sm btn-link text-danger p-0"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if chart_labels %}
+<script>
+const ctx = document.getElementById('adminChart');
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: {{ chart_labels|tojson }},
+    datasets: [{
+      label: 'Total setoran (Rp)',
+      data: {{ chart_data|tojson }},
+      borderColor: '#6C5CE7',
+      backgroundColor: 'rgba(108,92,231,0.15)',
+      fill: true,
+      tension: 0.35,
+      pointBackgroundColor: '#6C5CE7'
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true } }
+  }
+});
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Ubah target' if mode == 'ubah' else 'Buat target' }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="card auth-card p-4">
+    <div class="card-body">
+      <h4 class="fw-bold mb-1">
+        <i class="bi bi-{{ 'pencil-square' if mode == 'ubah' else 'flag-fill' }} text-primary"></i>
+        {{ 'Ubah target' if mode == 'ubah' else 'Buat target baru' }}
+      </h4>
+      <p class="text-muted small mb-4">Contoh: "Beli HP baru" dengan nominal Rp5.000.000.</p>
+      <form method="POST" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Nama target</label>
+          <input type="text" name="nama" class="form-control" minlength="3" required
+                 placeholder="Misal: Beli HP baru" value="{{ nama or '' }}">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Nominal target (Rp)</label>
+          <input type="number" name="nominal_target" class="form-control" min="1" step="1" required
+                 placeholder="5000000" value="{{ nominal_target or '' }}">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Batas waktu <span class="text-muted">(opsional)</span></label>
+          <input type="date" name="tanggal_target" class="form-control" value="{{ tanggal_target or '' }}">
+        </div>
+        <button type="submit" class="btn btn-primary w-100">
+          {{ 'Simpan perubahan' if mode == 'ubah' else 'Buat target' }}
+        </button>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-link w-100 text-muted mt-1">Batal</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

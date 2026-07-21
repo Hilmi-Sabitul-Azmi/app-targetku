@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Daftar{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="card auth-card p-4">
+    <div class="card-body">
+      <h4 class="fw-bold mb-1"><i class="bi bi-piggy-bank-fill text-primary"></i> Daftar akun TargetKu</h4>
+      <p class="text-muted small mb-4">Gratis, dan progres tabunganmu tersimpan aman.</p>
+      <form method="POST" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-control" minlength="3" required value="{{ username or '' }}">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control" required value="{{ email or '' }}">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" minlength="6" required>
+          <div class="form-text">Minimal 6 karakter.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Konfirmasi password</label>
+          <input type="password" name="confirm_password" class="form-control" minlength="6" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Daftar</button>
+      </form>
+      <p class="text-center small text-muted mt-3 mb-0">
+        Sudah punya akun? <a href="{{ url_for('login') }}">Masuk di sini</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

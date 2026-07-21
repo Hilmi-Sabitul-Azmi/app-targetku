@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Masuk{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="card auth-card p-4">
+    <div class="card-body">
+      <h4 class="fw-bold mb-1"><i class="bi bi-piggy-bank-fill text-primary"></i> Masuk ke TargetKu</h4>
+      <p class="text-muted small mb-4">Lanjutkan progres tabunganmu.</p>
+      <form method="POST" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-control" required autofocus>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Masuk</button>
+      </form>
+      <p class="text-center small text-muted mt-3 mb-0">
+        Belum punya akun? <a href="{{ url_for('register') }}">Daftar gratis</a>
+      </p>
+      <p class="text-center small mt-2 mb-0">
+        <a href="{{ url_for('admin_login') }}" class="text-muted"><i class="bi bi-shield-lock"></i> Masuk sebagai admin</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

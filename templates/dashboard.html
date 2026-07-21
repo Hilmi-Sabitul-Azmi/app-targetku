@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h3 class="fw-bold mb-0">Halo, {{ current_user.username }} <i class="bi bi-hand-thumbs-up"></i></h3>
+      <p class="text-muted mb-0">Ini progres tabunganmu sejauh ini.</p>
+    </div>
+    <a href="{{ url_for('target_tambah') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Buat target baru</a>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="stat-card d-flex align-items-center gap-3">
+        <div class="stat-icon" style="background:#EEF0FF;color:#6C5CE7;"><i class="bi bi-cash-stack"></i></div>
+        <div>
+          <div class="text-muted small">Total tabungan terkumpul</div>
+          <div class="fs-5 fw-bold">Rp {{ '{:,.0f}'.format(total_tabungan).replace(',', '.') }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card d-flex align-items-center gap-3">
+        <div class="stat-icon" style="background:#FFF6E0;color:#e0a713;"><i class="bi bi-hourglass-split"></i></div>
+        <div>
+          <div class="text-muted small">Target berjalan</div>
+          <div class="fs-5 fw-bold">{{ total_target_aktif }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card d-flex align-items-center gap-3">
+        <div class="stat-icon" style="background:#E4FBF3;color:#00B894;"><i class="bi bi-trophy-fill"></i></div>
+        <div>
+          <div class="text-muted small">Target tercapai</div>
+          <div class="fs-5 fw-bold">{{ total_tercapai }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if targets %}
+  <div class="card p-4 mb-4">
+    <h6 class="fw-semibold mb-3"><i class="bi bi-bar-chart-fill text-primary"></i> Progres semua target (%)</h6>
+    <canvas id="progressChart" height="90"></canvas>
+  </div>
+  {% endif %}
+
+  <h5 class="fw-semibold mb-3">Daftar target</h5>
+
+  {% if not targets %}
+    <div class="empty-state card">
+      <i class="bi bi-flag display-4 mb-3"></i>
+      <p class="mb-3">Kamu belum punya target tabungan. Yuk buat yang pertama!</p>
+      <a href="{{ url_for('target_tambah') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Buat target</a>
+    </div>
+  {% else %}
+    <div class="row g-3">
+      {% for t in targets %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card target-card p-3 h-100">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h6 class="fw-bold mb-0">{{ t.nama }}</h6>
+            <span class="badge {{ 'badge-status-tercapai' if t.sudah_tercapai else 'badge-status-berjalan' }} rounded-pill px-2">
+              {{ 'Tercapai' if t.sudah_tercapai else 'Berjalan' }}
+            </span>
+          </div>
+          <div class="small text-muted mb-2">
+            Rp {{ '{:,.0f}'.format(t.total_terkumpul).replace(',', '.') }} / Rp {{ '{:,.0f}'.format(t.nominal_target).replace(',', '.') }}
+            {% if t.tanggal_target %}
+              <br><i class="bi bi-calendar-event"></i> Target: {{ t.tanggal_target.strftime('%d %b %Y') }}
+            {% endif %}
+          </div>
+          <div class="progress mb-2">
+            <div class="progress-bar {{ 'bg-success-gradient' if t.sudah_tercapai else '' }}" style="width: {{ t.persentase }}%"></div>
+          </div>
+          <div class="small fw-semibold mb-3">{{ t.persentase }}% tercapai</div>
+          <a href="{{ url_for('target_detail', target_id=t.id) }}" class="btn btn-outline-primary btn-sm mt-auto">
+            <i class="bi bi-eye"></i> Lihat detail
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if targets %}
+<script>
+const ctx = document.getElementById('progressChart');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: {{ chart_labels|tojson }},
+    datasets: [{
+      label: 'Progres (%)',
+      data: {{ chart_data|tojson }},
+      backgroundColor: '#6C5CE7',
+      borderRadius: 8,
+      maxBarThickness: 42
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }
+  }
+});
+</script>
+{% endif %}
+{% endblock %}

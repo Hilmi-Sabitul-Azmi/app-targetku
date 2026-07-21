@@ -1,0 +1,130 @@
+:root {
+  --tk-primary: #6C5CE7;
+  --tk-primary-dark: #5849c2;
+  --tk-secondary: #00CEC9;
+  --tk-bg: #F7F7FC;
+  --tk-success: #00B894;
+  --tk-warning: #FDCB6E;
+  --tk-danger: #E17055;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--tk-bg);
+  color: #2d2d2d;
+}
+
+.navbar-brand {
+  font-size: 1.3rem;
+}
+
+.btn-primary {
+  background-color: var(--tk-primary);
+  border-color: var(--tk-primary);
+}
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--tk-primary-dark);
+  border-color: var(--tk-primary-dark);
+}
+.btn-outline-primary {
+  color: var(--tk-primary);
+  border-color: var(--tk-primary);
+}
+.btn-outline-primary:hover {
+  background-color: var(--tk-primary);
+  border-color: var(--tk-primary);
+}
+.text-primary { color: var(--tk-primary) !important; }
+
+.hero {
+  background: linear-gradient(135deg, var(--tk-primary) 0%, #8e7cff 50%, var(--tk-secondary) 100%);
+  color: white;
+  padding: 90px 0 110px;
+  border-radius: 0 0 40px 40px;
+}
+.hero h1 { font-weight: 700; font-size: 2.6rem; }
+.hero p { font-size: 1.15rem; opacity: .95; }
+
+.stat-card {
+  background: white;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 6px 24px rgba(108,92,231,0.08);
+  border: none;
+}
+.stat-card .stat-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+}
+
+.card {
+  border: none;
+  border-radius: 18px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+}
+
+.target-card {
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.target-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(108,92,231,0.15);
+}
+
+.progress {
+  height: 12px;
+  border-radius: 20px;
+  background-color: #ECECF7;
+}
+.progress-bar {
+  background: linear-gradient(90deg, var(--tk-primary), var(--tk-secondary));
+  border-radius: 20px;
+}
+.progress-bar.bg-success-gradient {
+  background: linear-gradient(90deg, #00B894, #55efc4);
+}
+
+.badge-status-berjalan {
+  background-color: #EEF0FF;
+  color: var(--tk-primary);
+}
+.badge-status-tercapai {
+  background-color: #E4FBF3;
+  color: var(--tk-success);
+}
+
+.auth-card {
+  max-width: 440px;
+  margin: 60px auto;
+}
+
+.celebrate-box {
+  background: linear-gradient(135deg, #00B894, #55efc4);
+  color: white;
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+}
+
+.feature-icon {
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: #EEF0FF;
+  color: var(--tk-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.form-control:focus {
+  border-color: var(--tk-primary);
+  box-shadow: 0 0 0 0.2rem rgba(108,92,231,0.15);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #8a8a8a;
+}

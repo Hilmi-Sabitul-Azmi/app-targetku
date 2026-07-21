@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block title %}{{ target.nama }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+
+  <a href="{{ url_for('dashboard') }}" class="text-decoration-none text-muted small">
+    <i class="bi bi-arrow-left"></i> Kembali ke dashboard
+  </a>
+
+  {% if just_reached %}
+  <div class="celebrate-box my-4">
+    <i class="bi bi-trophy-fill display-4"></i>
+    <h3 class="fw-bold mt-2">Selamat! 🎉</h3>
+    <p class="mb-0">Target "{{ target.nama }}" sudah tercapai sepenuhnya. Kerja bagus konsisten menabung!</p>
+  </div>
+  {% endif %}
+
+  <div class="row g-4 mt-1">
+    <div class="col-lg-5">
+      <div class="card p-4">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h4 class="fw-bold mb-0">{{ target.nama }}</h4>
+          <span class="badge {{ 'badge-status-tercapai' if target.sudah_tercapai else 'badge-status-berjalan' }} rounded-pill px-2">
+            {{ 'Tercapai' if target.sudah_tercapai else 'Berjalan' }}
+          </span>
+        </div>
+        {% if target.tanggal_target %}
+        <p class="text-muted small mb-3"><i class="bi bi-calendar-event"></i> Batas waktu: {{ target.tanggal_target.strftime('%d %B %Y') }}</p>
+        {% endif %}
+
+        <div class="progress mb-2">
+          <div class="progress-bar {{ 'bg-success-gradient' if target.sudah_tercapai else '' }}" style="width: {{ target.persentase }}%"></div>
+        </div>
+        <div class="d-flex justify-content-between small mb-4">
+          <span class="fw-semibold">{{ target.persentase }}%</span>
+          <span class="text-muted">Rp {{ '{:,.0f}'.format(target.total_terkumpul).replace(',', '.') }} / Rp {{ '{:,.0f}'.format(target.nominal_target).replace(',', '.') }}</span>
+        </div>
+
+        {% if not target.sudah_tercapai %}
+        <p class="small text-muted mb-3">Sisa yang harus ditabung: <strong>Rp {{ '{:,.0f}'.format(target.sisa).replace(',', '.') }}</strong></p>
+        {% endif %}
+
+        <hr>
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('target_ubah', target_id=target.id) }}" class="btn btn-outline-secondary btn-sm flex-fill">
+            <i class="bi bi-pencil"></i> Ubah
+          </a>
+          <form action="{{ url_for('target_hapus', target_id=target.id) }}" method="POST" class="flex-fill"
+                onsubmit="return confirm('Hapus target ini beserta seluruh riwayat setorannya?');">
+            <button type="submit" class="btn btn-outline-danger btn-sm w-100"><i class="bi bi-trash"></i> Hapus</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card p-4 mt-3">
+        <h6 class="fw-semibold mb-3"><i class="bi bi-plus-circle text-primary"></i> Catat setoran baru</h6>
+        <form method="POST" action="{{ url_for('setoran_tambah', target_id=target.id) }}" novalidate>
+          <div class="mb-3">
+            <label class="form-label">Nominal (Rp)</label>
+            <input type="number" name="jumlah" class="form-control" min="1" step="1" required placeholder="50000">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Tanggal</label>
+            <input type="date" name="tanggal" class="form-control" value="{{ today }}">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Catatan <span class="text-muted">(opsional)</span></label>
+            <input type="text" name="catatan" class="form-control" placeholder="Misal: sisa jajan minggu ini">
+          </div>
+          <button type="submit" class="btn btn-primary w-100"><i class="bi bi-piggy-bank"></i> Simpan setoran</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card p-4">
+        <h6 class="fw-semibold mb-3"><i class="bi bi-clock-history text-primary"></i> Riwayat setoran</h6>
+        {% if not target.setoran_list %}
+          <div class="empty-state">
+            <i class="bi bi-inbox display-5 mb-2"></i>
+            <p class="mb-0">Belum ada setoran tercatat.</p>
+          </div>
+        {% else %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr class="small text-muted">
+                  <th>Tanggal</th>
+                  <th>Nominal</th>
+                  <th>Catatan</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for s in target.setoran_list %}
+                <tr>
+                  <td class="small">{{ s.tanggal.strftime('%d %b %Y') }}</td>
+                  <td class="fw-semibold text-success">+Rp {{ '{:,.0f}'.format(s.jumlah).replace(',', '.') }}</td>
+                  <td class="small text-muted">{{ s.catatan or '-' }}</td>
+                  <td class="text-end">
+                    <form action="{{ url_for('setoran_hapus', setoran_id=s.id) }}" method="POST"
+                          onsubmit="return confirm('Hapus setoran ini?');">
+                      <button type="submit" class="btn btn-sm btn-link text-danger p-0"><i class="bi bi-trash"></i></button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
