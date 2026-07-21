@@ -21,7 +21,11 @@ if _db_url.startswith('postgres://'):
 app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-os.makedirs(os.path.join(basedir, 'instance'), exist_ok=True)
+# Folder instance/ hanya dibutuhkan untuk SQLite lokal. Di server serverless seperti
+# Vercel, DATABASE_URL selalu diisi (Postgres) dan filesystem-nya read-only, jadi
+# bagian ini WAJIB dilewati agar tidak error "Read-only file system".
+if _db_url.startswith('sqlite:'):
+    os.makedirs(os.path.join(basedir, 'instance'), exist_ok=True)
 
 db = SQLAlchemy(app)
 
