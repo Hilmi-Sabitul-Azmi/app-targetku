@@ -509,6 +509,37 @@ def admin_user_hapus(user_id):
     return redirect(url_for('admin_dashboard'))
 
 
+@app.route('/admin/ganti-password', methods=['GET', 'POST'])
+@admin_required
+def admin_ganti_password():
+    if request.method == 'POST':
+        password_lama = request.form.get('password_lama', '')
+        password_baru = request.form.get('password_baru', '')
+        konfirmasi = request.form.get('konfirmasi_password', '')
+
+        errors = []
+        if not current_user.check_password(password_lama):
+            errors.append('Password lama yang kamu masukkan salah.')
+        if not password_baru or len(password_baru) < 6:
+            errors.append('Password baru minimal 6 karakter.')
+        if password_baru != konfirmasi:
+            errors.append('Konfirmasi password baru tidak cocok.')
+        if password_lama and password_baru and password_lama == password_baru:
+            errors.append('Password baru tidak boleh sama dengan password lama.')
+
+        if errors:
+            for e in errors:
+                flash(e, 'danger')
+            return render_template('admin_ganti_password.html')
+
+        current_user.set_password(password_baru)
+        db.session.commit()
+        flash('Password admin berhasil diganti. Gunakan password baru untuk login berikutnya.', 'success')
+        return redirect(url_for('admin_dashboard'))
+
+    return render_template('admin_ganti_password.html')
+
+
 # ---------------------------------------------------------------------------
 # CLI: inisialisasi database & admin default
 # ---------------------------------------------------------------------------
